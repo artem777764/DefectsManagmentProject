@@ -21,5 +21,5 @@ public class DefectEntity
     public PriorityEntity Priority { get; set; } = null!;
     public List<AttachmentEntity> Attachments { get; set; } = new List<AttachmentEntity>();
     public UserEntity Creator { get; set; } = null!;
-    public UserEntity Executor { get; set; } = null!;
+    public UserEntity? Executor { get; set; }
 }
