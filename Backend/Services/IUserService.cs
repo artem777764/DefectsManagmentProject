@@ -6,8 +6,8 @@ namespace Backend.Services;
 
 public interface IUserService
 {
-    Task<int> RegisterUserAsync(CreateUserDTO createUserDto);
-    Task<int> UpdateUserDataAsync(CreateUserDataDTO createUserDataDto);
+    Task<RegisterAnswerDTO> RegisterUserAsync(CreateUserDTO createUserDto);
+    Task<UpdateDataAnswerDTO> UpdateUserDataAsync(CreateUserDataDTO createUserDataDto);
     Task<List<GetUserDTO>> GetUsersAsync();
     Task<GetUserDTO?> GetUserByIdAsync(int userId);
     Task RemoveByIdAsync(int userId);

@@ -35,6 +35,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
+builder.Services.AddScoped<IValidationService, ValidationService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 

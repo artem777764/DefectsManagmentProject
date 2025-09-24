@@ -19,15 +19,17 @@ public class UserController : ControllerBase
     [HttpPost("/")]
     public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserDTO userDto)
     {
-        int createdUserId = await _userSerivce.RegisterUserAsync(userDto);
-        return Ok(createdUserId);
+        RegisterAnswerDTO registerAnswerDTO = await _userSerivce.RegisterUserAsync(userDto);
+        if (!registerAnswerDTO.Successful) return Conflict(registerAnswerDTO);
+        else return Ok(registerAnswerDTO);
     }
 
     [HttpPut("/")]
     public async Task<IActionResult> UpdateUserDataAsync([FromBody] CreateUserDataDTO userDataDto)
     {
-        int createdUserDataId = await _userSerivce.UpdateUserDataAsync(userDataDto);
-        return Ok(createdUserDataId);
+        UpdateDataAnswerDTO updateDataAnswerDTO = await _userSerivce.UpdateUserDataAsync(userDataDto);
+        if (!updateDataAnswerDTO.Successful) return Conflict(updateDataAnswerDTO);
+        else return Ok(updateDataAnswerDTO);
     }
 
     [HttpGet("/")]
