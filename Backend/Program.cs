@@ -1,10 +1,13 @@
+using System.Text;
 using backend.Services;
 using Backend.Models;
 using Backend.Models.Context;
 using Backend.Repositories;
 using Backend.Services;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 Env.Load();
 
@@ -22,7 +25,7 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
     opt.UseNpgsql(
-        Environment.GetEnvironmentVariable("APPLICATIONDATABASECONNECTION")!
+        Environment.GetEnvironmentVariable("ApplicationDatabaseConnection")!
     )
 );
 
@@ -34,8 +37,40 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = false;
     });
 
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                builder.Configuration.GetValue<string>("JwtSettings:SecretKey")!
+            )),
+
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
+
+            ValidateLifetime = true,
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["jwt"];
+                return Task.CompletedTask;
+            }
+        };
+    });
+
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 

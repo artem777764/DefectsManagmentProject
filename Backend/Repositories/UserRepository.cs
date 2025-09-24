@@ -37,17 +37,17 @@ public class UserRepository : IUserRepository
 
     public async Task<UserEntity?> GetByIdAsync(int userId)
     {
-        return await _context.Users.Include(u => u.UserData).FirstOrDefaultAsync(u => u.Id == userId);
+        return await _context.Users.Include(u => u.UserData).Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId);
     }
 
     public async Task<UserEntity?> GetByEmailAsync(string email)
     {
-        return await _context.Users.Include(u => u.UserData).FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.Users.Include(u => u.UserData).Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<UserEntity?> GetByLoginAsync(string login)
     {
-        return await _context.Users.Include(u => u.UserData).FirstOrDefaultAsync(u => u.Login == login);
+        return await _context.Users.Include(u => u.UserData).Include(u => u.Role).FirstOrDefaultAsync(u => u.Login == login);
     }
 
     public async Task RemoveByIdAsync(int userId)

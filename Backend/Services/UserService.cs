@@ -1,4 +1,3 @@
-using System.Data.SqlTypes;
 using backend.Services;
 using Backend.DTOs.UserDTOs;
 using Backend.Extensions;
@@ -12,16 +11,25 @@ public class UserService : IUserService
     private readonly IUserRepository _userRepository;
     private readonly IEncryptionService _encryptionService;
     private readonly IValidationService _validationService;
+    private readonly IJwtService _jwtService;
     private readonly RegisterAnswerDTOBuilder _registerAnswerBuilder;
     private readonly UpdateDataAnswerDTOBuilder _updateDataAnswerBuilder;
+    private readonly AuthorizeAnswerDTOBuilder _authorizeAnswerBuilder;
 
-    public UserService(IUserRepository userRepository, IEncryptionService encryptionService, IValidationService validationService)
+    public UserService(
+        IUserRepository userRepository,
+        IEncryptionService encryptionService,
+        IValidationService validationService,
+        IJwtService jwtService
+    )
     {
         _userRepository = userRepository;
         _encryptionService = encryptionService;
         _validationService = validationService;
+        _jwtService = jwtService;
         _registerAnswerBuilder = new RegisterAnswerDTOBuilder();
         _updateDataAnswerBuilder = new UpdateDataAnswerDTOBuilder();
+        _authorizeAnswerBuilder = new AuthorizeAnswerDTOBuilder();
     }
 
     public async Task<RegisterAnswerDTO> RegisterUserAsync(CreateUserDTO createUserDto)
@@ -89,6 +97,37 @@ public class UserService : IUserService
         _updateDataAnswerBuilder.SetSuccessful();
         
         return _updateDataAnswerBuilder.Build();
+    }
+
+    public async Task<AuthorizeAnswerDTO> AuthorizeAsync(AuthorizeDTO authorizeDTO)
+    {
+        UserEntity? userEntity = await _userRepository.GetByEmailAsync(authorizeDTO.UserName);
+        if (userEntity == null) userEntity = await _userRepository.GetByLoginAsync(authorizeDTO.UserName);
+        if (userEntity == null)
+        {
+            _authorizeAnswerBuilder.SetMessage("Почта/Логин не существует");
+            return _authorizeAnswerBuilder.Build();
+        }
+
+        if (!_encryptionService.VerifyPassword(authorizeDTO.Password, userEntity!.PasswordHash))
+        {
+            _authorizeAnswerBuilder.SetMessage("Неверный пароль");
+            return _authorizeAnswerBuilder.Build();
+        }
+
+        string jwtToken = _jwtService.GenerateToken(userEntity);
+        string JwtCookieName = _jwtService.GetJwtCookieName();
+        int expireHours = _jwtService.GetExpireHours();
+
+        _authorizeAnswerBuilder.SetUserId(userEntity.Id)
+                               .SetRoleId(userEntity.Role.Id)
+                               .SetJwtToken(jwtToken)
+                               .SetJwtCookieName(JwtCookieName)
+                               .SetExpireHours(expireHours)
+                               .SetMessage("Успешная авторизация")
+                               .SetSuccessful();
+
+        return _authorizeAnswerBuilder.Build();
     }
 
     public async Task<List<GetUserDTO>> GetUsersAsync()

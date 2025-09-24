@@ -16,7 +16,7 @@ public class UserController : ControllerBase
         _userSerivce = userService;
     }
 
-    [HttpPost("/")]
+    [HttpPost("/register")]
     public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserDTO userDto)
     {
         RegisterAnswerDTO registerAnswerDTO = await _userSerivce.RegisterUserAsync(userDto);
@@ -30,6 +30,21 @@ public class UserController : ControllerBase
         UpdateDataAnswerDTO updateDataAnswerDTO = await _userSerivce.UpdateUserDataAsync(userDataDto);
         if (!updateDataAnswerDTO.Successful) return Conflict(updateDataAnswerDTO);
         else return Ok(updateDataAnswerDTO);
+    }
+
+    [HttpPost("/login")]
+    public async Task<IActionResult> AuthorizeUserAsync([FromBody] AuthorizeDTO authorizeDTO)
+    {
+        AuthorizeAnswerDTO authorizeAnswerDTO = await _userSerivce.AuthorizeAsync(authorizeDTO);
+        if (!authorizeAnswerDTO.Successful) return NotFound(authorizeAnswerDTO);
+
+        Response.Cookies.Append(authorizeAnswerDTO.JwtCookieName!, authorizeAnswerDTO.JwtToken!, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            Expires = DateTime.UtcNow.AddHours(authorizeAnswerDTO.ExpireHours)
+        });
+        return Ok(authorizeAnswerDTO);
     }
 
     [HttpGet("/")]
