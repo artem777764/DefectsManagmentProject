@@ -16,11 +16,11 @@ public static class UserExtensions
         };
     }
 
-    public static UserDataEntity ToEntity(this CreateUserDataDTO userDataDto)
+    public static UserDataEntity ToEntity(this CreateUserDataDTO userDataDto, int userId)
     {
         return new UserDataEntity
         {
-            Id = userDataDto.UserId,
+            Id = userId,
             Surname = userDataDto.Surname,
             Name = userDataDto.Name,
             Patronymic = userDataDto.Patronymic,

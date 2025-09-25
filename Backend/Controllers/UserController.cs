@@ -1,7 +1,9 @@
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 using Backend.DTOs.UserDTOs;
 using Backend.Models.Entities;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -24,10 +26,15 @@ public class UserController : ControllerBase
         else return Ok(registerAnswerDTO);
     }
 
+    [AuthorizeByPolicy(Policy.Admin)]
     [HttpPut("/")]
     public async Task<IActionResult> UpdateUserDataAsync([FromBody] CreateUserDataDTO userDataDto)
     {
-        UpdateDataAnswerDTO updateDataAnswerDTO = await _userSerivce.UpdateUserDataAsync(userDataDto);
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim.Value);
+
+        UpdateDataAnswerDTO updateDataAnswerDTO = await _userSerivce.UpdateUserDataAsync(userDataDto, userId);
         if (!updateDataAnswerDTO.Successful) return Conflict(updateDataAnswerDTO);
         else return Ok(updateDataAnswerDTO);
     }
@@ -54,7 +61,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("/{id}")]
-    public async Task<IActionResult> GetUsersAsync([FromRoute] int id)
+    public async Task<IActionResult> GetUserAsync([FromRoute] int id)
     {
         GetUserDTO? userDTO = await _userSerivce.GetUserByIdAsync(id);
         if (userDTO == null) return NotFound();

@@ -29,7 +29,7 @@ public class JwtService : IJwtService
     {
         Claim[] claims = {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.Name),
+            new Claim(ClaimTypes.Role, user.Role.Id.ToString()),
         };
 
         SigningCredentials signingCredentials = new SigningCredentials(

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using backend.Services;
 using Backend.Models;
@@ -37,6 +38,21 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = false;
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Policy.Engineer.ToPolicyName(), policy =>
+        policy.RequireClaim(ClaimTypes.Role, ((int)Role.Engineer).ToString()));
+
+    options.AddPolicy(Policy.Manager.ToPolicyName(), policy =>
+        policy.RequireClaim(ClaimTypes.Role, ((int)Role.Manager).ToString()));
+
+    options.AddPolicy(Policy.Observer.ToPolicyName(), policy =>
+        policy.RequireClaim(ClaimTypes.Role, ((int)Role.Observer).ToString()));
+
+    options.AddPolicy(Policy.Admin.ToPolicyName(), policy =>
+        policy.RequireClaim(ClaimTypes.Role, ((int)Role.Admin).ToString()));
+});
+
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -58,11 +74,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
         };
 
+        string cookieName = builder.Configuration["JwtSettings:JwtCookieName"]!;
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
             {
-                context.Token = context.Request.Cookies["jwt"];
+                context.Token = context.Request.Cookies[cookieName];
                 return Task.CompletedTask;
             }
         };
@@ -87,9 +104,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseRouting();
-app.MapControllers();
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
 PrepareDb.Prepare(app);
 

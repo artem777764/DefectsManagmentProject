@@ -69,7 +69,7 @@ public class UserService : IUserService
         return _registerAnswerBuilder.Build();
     }
 
-    public async Task<UpdateDataAnswerDTO> UpdateUserDataAsync(CreateUserDataDTO createUserDataDto)
+    public async Task<UpdateDataAnswerDTO> UpdateUserDataAsync(CreateUserDataDTO createUserDataDto, int userId)
     {
         if (!_validationService.IsValidSurname(createUserDataDto.Surname))
         {
@@ -89,7 +89,7 @@ public class UserService : IUserService
             return _updateDataAnswerBuilder.Build();
         }
 
-        UserDataEntity userDataEntity = createUserDataDto.ToEntity();
+        UserDataEntity userDataEntity = createUserDataDto.ToEntity(userId);
 
         int createdUserDataId = await _userRepository.UpdateUserDataAsync(userDataEntity);
         _updateDataAnswerBuilder.SetUserId(createdUserDataId);
