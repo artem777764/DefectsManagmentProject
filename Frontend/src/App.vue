@@ -4,7 +4,9 @@ import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <RouterView/>
+  <div class="min-h-screen bg-background">
+    <RouterView/>
+  </div>
 </template>
 
 <style scoped>

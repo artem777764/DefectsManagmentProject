@@ -16,7 +16,10 @@ export default {
         fail: 'var(--color-fail)',
         'dark-line': 'var(--color-dark-line)',
         text: 'var(--color-text)',
-      }
+      },
+      fontFamily: {
+        roboto: ['"Roboto"', 'sans-serif'],
+      },
     },
   },
   plugins: [],
