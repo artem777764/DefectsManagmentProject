@@ -40,6 +40,16 @@ public class UserRepository : IUserRepository
         return await _context.Users.Include(u => u.UserData).Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId);
     }
 
+    public async Task<bool> IsEmailExist(string email)
+    {
+        return await _context.Users.AnyAsync(u => u.Email == email);
+    }
+
+    public async Task<bool> IsLoginExist(string login)
+    {
+        return await _context.Users.AnyAsync(u => u.Login == login);
+    }
+
     public async Task<UserEntity?> GetByEmailAsync(string email)
     {
         return await _context.Users.Include(u => u.UserData).Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);

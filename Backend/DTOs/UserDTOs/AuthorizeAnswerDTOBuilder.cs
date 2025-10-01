@@ -51,6 +51,12 @@ public record AuthorizeAnswerDTOBuilder
         return this;
     }
 
+    public AuthorizeAnswerDTOBuilder SetHasData()
+    {
+        _authorizeResult.HasData = true;
+        return this;
+    }
+
     public AuthorizeAnswerDTO Build()
     {
         return _authorizeResult;

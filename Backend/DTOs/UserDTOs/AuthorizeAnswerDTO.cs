@@ -3,6 +3,7 @@ namespace Backend.DTOs.UserDTOs;
 public record AuthorizeAnswerDTO
 {
     public bool Successful { get; set; }
+    public bool HasData { get; set; }
     public int? UserId { get; set; }
     public int? RoleId { get; set; }
     public string? JwtToken { get; set; }

@@ -27,8 +27,8 @@ public class UsersController : ControllerBase
         else return Ok(registerAnswerDTO);
     }
 
-    [AuthorizeByPolicy(Policy.Admin)]
-    [HttpPut("")]
+    [Authorize]
+    [HttpPut("data")]
     public async Task<IActionResult> UpdateUserDataAsync([FromBody] CreateUserDataDTO userDataDto)
     {
         Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);

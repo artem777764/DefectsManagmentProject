@@ -9,7 +9,7 @@
       <AppInput v-model="passwordConfirm" :is-hidden="true" placeholder-value="Подтвердить пароль" class="w-full"></AppInput>
       <div class="flex flex-row items-center">
         <AppCheckbox v-model="policeAccept"/>
-        <AppText class="inline-block leading-none align-middle ml-2 text-xl pt-1">Принимаю условию компании</AppText>
+        <AppText class="inline-block leading-none align-middle ml-2 text-xl pt-1">Принимаю условия компании</AppText>
       </div>
       <div>
         <AppButton @click="handleRegister" class="w-full">Зарегистрироваться</AppButton>
@@ -30,6 +30,9 @@ import AppText from '@/components/ui/AppText.vue';
 import { userApi } from '@/lib/userApi';
 import type { CreateUserDTO } from '@/types/user/createUserDTO';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const email = defineModel<string>('email');
 const login = defineModel<string>('login');
@@ -42,10 +45,24 @@ const resultText = ref('');
 
 const resultClass = computed(() => {
   if (registerSuccess.value === null) return 'text-text';
-  return registerSuccess.value ? 'text-[var(--color-success)]' : 'text-[var(--color-fail)]';
+  return registerSuccess.value ? 'text-success' : 'text-fail';
 });
 
 async function handleRegister() {
+  if (email.value == null || login.value == null || password.value == null || passwordConfirm.value == null)
+  {
+    registerSuccess.value = false;
+    resultText.value = 'Все поля обязательны';
+    return;
+  }
+
+  if (!policeAccept)
+  {
+    registerSuccess.value = false;
+    resultText.value = 'Условия компании обязательны';
+    return;
+  }
+
   if (password.value != passwordConfirm.value)
   {
     registerSuccess.value = false;
@@ -64,6 +81,10 @@ async function handleRegister() {
     const registerAnswerDTO = await userApi.create(payload);
     registerSuccess.value = registerAnswerDTO.successful;
     resultText.value = registerAnswerDTO.message;
+
+    setTimeout(() => {
+        router.push({ name: 'login' })
+    }, 1500)
   } catch (e: any) {
     registerSuccess.value = false;
     if (e.response?.data) {

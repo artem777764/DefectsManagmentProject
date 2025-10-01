@@ -58,6 +58,18 @@ public class UserService : IUserService
             return _registerAnswerBuilder.Build();
         }
 
+        if (await _userRepository.IsEmailExist(createUserDto.Email))
+        {
+            _registerAnswerBuilder.SetMessage("Почта занята");
+            return _registerAnswerBuilder.Build();
+        }
+
+        if (await _userRepository.IsLoginExist(createUserDto.Login))
+        {
+            _registerAnswerBuilder.SetMessage("Логин занят");
+            return _registerAnswerBuilder.Build();
+        }
+
         string password = _encryptionService.HashPassword(createUserDto.Password);
         UserEntity userEntity = createUserDto.ToEntity(password, 1);
 
@@ -83,7 +95,7 @@ public class UserService : IUserService
             return _updateDataAnswerBuilder.Build();
         }
 
-        if (!_validationService.IsValidPatronymic(createUserDataDto.Patronymic))
+        if (createUserDataDto.Patronymic != null && !_validationService.IsValidPatronymic(createUserDataDto.Patronymic))
         {
             _updateDataAnswerBuilder.SetMessage("Некорректное отчество");
             return _updateDataAnswerBuilder.Build();
@@ -93,7 +105,7 @@ public class UserService : IUserService
 
         int createdUserDataId = await _userRepository.UpdateUserDataAsync(userDataEntity);
         _updateDataAnswerBuilder.SetUserId(createdUserDataId);
-        _updateDataAnswerBuilder.SetMessage("Успешное онбволение данных");
+        _updateDataAnswerBuilder.SetMessage("Успешное обновление данных");
         _updateDataAnswerBuilder.SetSuccessful();
         
         return _updateDataAnswerBuilder.Build();
@@ -118,6 +130,8 @@ public class UserService : IUserService
         string jwtToken = _jwtService.GenerateToken(userEntity);
         string JwtCookieName = _jwtService.GetJwtCookieName();
         int expireHours = _jwtService.GetExpireHours();
+
+        if (userEntity.UserData != null) _authorizeAnswerBuilder.SetHasData();
 
         _authorizeAnswerBuilder.SetUserId(userEntity.Id)
                                .SetRoleId(userEntity.Role.Id)

@@ -1,5 +1,5 @@
 <template>
-  <p class="font-roboto text-text">
+  <p class="font-roboto">
     <slot></slot>
   </p>
 </template>
