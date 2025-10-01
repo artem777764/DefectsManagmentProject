@@ -55,7 +55,7 @@ async function handleUpdateData() {
     resultText.value = updateDataAnswerDTO.message;
 
     setTimeout(() => {
-        router.push({ name: 'projects' })
+        router.push({ name: 'objects' })
     }, 1500)
   } catch (e: any) {
     dataUpdateSuccess.value = false;

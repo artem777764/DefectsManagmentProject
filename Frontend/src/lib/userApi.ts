@@ -16,4 +16,7 @@ export const userApi = {
 
   updateData: (payload: CreateUserDataDTO) : Promise<UpdateDataAnswerDTO> =>
     putData<UpdateDataAnswerDTO, CreateUserDataDTO>('users/data', payload),
+
+  logout: (): Promise<void> =>
+    postData<void, undefined>('users/logout'),
 };

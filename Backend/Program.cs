@@ -101,6 +101,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<JwtCookieService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 

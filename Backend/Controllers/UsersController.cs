@@ -13,10 +13,12 @@ namespace Backend.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userSerivce;
+    private readonly JwtCookieService _jwtCookieService;
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, JwtCookieService jwtCookieService)
     {
         _userSerivce = userService;
+        _jwtCookieService = jwtCookieService;
     }
 
     [HttpPost("register")]
@@ -46,12 +48,11 @@ public class UsersController : ControllerBase
         AuthorizeAnswerDTO authorizeAnswerDTO = await _userSerivce.AuthorizeAsync(authorizeDTO);
         if (!authorizeAnswerDTO.Successful) return NotFound(authorizeAnswerDTO);
 
-        Response.Cookies.Append(authorizeAnswerDTO.JwtCookieName!, authorizeAnswerDTO.JwtToken!, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            Expires = DateTime.UtcNow.AddHours(authorizeAnswerDTO.ExpireHours)
-        });
+        Response.Cookies.Append(
+            authorizeAnswerDTO.JwtCookieName!,
+            authorizeAnswerDTO.JwtToken!,
+            _jwtCookieService.GetAuthCookieOptions());
+            
         return Ok(authorizeAnswerDTO);
     }
 
@@ -73,6 +74,13 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> RemoveUserAsync([FromRoute] int id)
     {
         await _userSerivce.RemoveByIdAsync(id);
+        return Ok();
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete(_jwtCookieService.CookieName, _jwtCookieService.GetAuthCookieOptions(true));
         return Ok();
     }
 }

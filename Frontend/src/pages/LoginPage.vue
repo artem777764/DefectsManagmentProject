@@ -63,7 +63,7 @@ async function handleLogin() {
         userId: authorizeAnswerDTO.userId!,
         roleId: authorizeAnswerDTO.roleId!
       })
-      if (authorizeAnswerDTO.hasData) router.push({ name: 'projects' })
+      if (authorizeAnswerDTO.hasData) router.push({ name: 'objects' })
       else router.push({ name: 'update-data' })
     }, 1500)
   } catch (e: any) {
