@@ -1,16 +1,21 @@
+import LoginPage from '@/pages/LoginPage.vue'
 import RegisterPage from '@/pages/RegisterPage.vue'
-import { createMemoryHistory, createRouter } from 'vue-router'
+import { createWebHistory, createRouter } from 'vue-router'
 
 const routes = [
-  { path: '/', redirect: '/register' },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginPage,
+  },
   {
     path: '/register',
     name: 'register',
-    component: RegisterPage
+    component: RegisterPage,
   },
 ]
 
 export const router = createRouter({
-  history: createMemoryHistory(),
+  history: createWebHistory(),
   routes,
 })

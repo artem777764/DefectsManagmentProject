@@ -32,9 +32,9 @@ public static class UserExtensions
         return new GetUserDTO
         {
             Id = userEntity.Id,
-            Surname = userEntity.UserData.Surname,
-            Name = userEntity.UserData.Name,
-            Patronymic = userEntity.UserData.Patronymic,
+            Surname = userEntity.UserData?.Surname ?? "Неизвестно",
+            Name = userEntity.UserData?.Name ?? "Неизвестно",
+            Patronymic = userEntity.UserData?.Patronymic ?? "Неизвестно",
         };
     }
 }

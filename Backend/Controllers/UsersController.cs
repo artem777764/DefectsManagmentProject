@@ -8,17 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
+[Route("[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UsersController : ControllerBase
 {
     private readonly IUserService _userSerivce;
 
-    public UserController(IUserService userService)
+    public UsersController(IUserService userService)
     {
         _userSerivce = userService;
     }
 
-    [HttpPost("/register")]
+    [HttpPost("register")]
     public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserDTO userDto)
     {
         RegisterAnswerDTO registerAnswerDTO = await _userSerivce.RegisterUserAsync(userDto);
@@ -27,7 +28,7 @@ public class UserController : ControllerBase
     }
 
     [AuthorizeByPolicy(Policy.Admin)]
-    [HttpPut("/")]
+    [HttpPut("")]
     public async Task<IActionResult> UpdateUserDataAsync([FromBody] CreateUserDataDTO userDataDto)
     {
         Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -39,7 +40,7 @@ public class UserController : ControllerBase
         else return Ok(updateDataAnswerDTO);
     }
 
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<IActionResult> AuthorizeUserAsync([FromBody] AuthorizeDTO authorizeDTO)
     {
         AuthorizeAnswerDTO authorizeAnswerDTO = await _userSerivce.AuthorizeAsync(authorizeDTO);
@@ -54,13 +55,13 @@ public class UserController : ControllerBase
         return Ok(authorizeAnswerDTO);
     }
 
-    [HttpGet("/")]
+    [HttpGet("")]
     public async Task<IActionResult> GetUsersAsync()
     {
         return Ok(await _userSerivce.GetUsersAsync());
     }
 
-    [HttpGet("/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetUserAsync([FromRoute] int id)
     {
         GetUserDTO? userDTO = await _userSerivce.GetUserByIdAsync(id);
@@ -68,7 +69,7 @@ public class UserController : ControllerBase
         else return Ok(userDTO);
     }
 
-    [HttpDelete("/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveUserAsync([FromRoute] int id)
     {
         await _userSerivce.RemoveByIdAsync(id);
