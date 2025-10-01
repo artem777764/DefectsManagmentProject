@@ -37,4 +37,18 @@ public static class UserExtensions
             Patronymic = userEntity.UserData?.Patronymic ?? "Неизвестно",
         };
     }
+
+    public static GetUserExtendedDTO ToExtendedDTO(this UserEntity userEntity)
+    {
+        return new GetUserExtendedDTO
+        {
+            Id = userEntity.Id,
+            Surname = userEntity.UserData?.Surname ?? "Неизвестно",
+            Name = userEntity.UserData?.Name ?? "Неизвестно",
+            Patronymic = userEntity.UserData?.Patronymic ?? "Неизвестно",
+            Email = userEntity.Email,
+            Login = userEntity.Login,
+            Role = userEntity.Role.Name,
+        };
+    }
 }

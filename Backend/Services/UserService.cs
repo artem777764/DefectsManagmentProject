@@ -149,11 +149,11 @@ public class UserService : IUserService
         return (await _userRepository.GetUsersAsync()).Select(u => u.ToDTO()).ToList();
     }
 
-    public async Task<GetUserDTO?> GetUserByIdAsync(int userId)
+    public async Task<GetUserExtendedDTO?> GetUserByIdAsync(int userId)
     {
         UserEntity? userEntity = await _userRepository.GetByIdAsync(userId);
         if (userEntity == null) return null;
-        else return userEntity.ToDTO();
+        else return userEntity.ToExtendedDTO();
     }
 
     public async Task RemoveByIdAsync(int userId)

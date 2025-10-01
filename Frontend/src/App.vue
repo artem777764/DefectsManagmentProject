@@ -6,7 +6,7 @@ import AppNavBar from '@/components/layout/AppNavBar.vue';
 
 <template>
   <div class="min-h-screen bg-background">
-    <AppNavBar v-if="$route.meta.showNavbar"/>
+    <AppNavBar class="sticky top-0" v-if="$route.meta.showNavbar"/>
     <RouterView/>
   </div>
 </template>

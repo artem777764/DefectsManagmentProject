@@ -10,6 +10,6 @@ public interface IUserService
     Task<UpdateDataAnswerDTO> UpdateUserDataAsync(CreateUserDataDTO createUserDataDto, int userId);
     Task<AuthorizeAnswerDTO> AuthorizeAsync(AuthorizeDTO authorizeDTO);
     Task<List<GetUserDTO>> GetUsersAsync();
-    Task<GetUserDTO?> GetUserByIdAsync(int userId);
+    Task<GetUserExtendedDTO?> GetUserByIdAsync(int userId);
     Task RemoveByIdAsync(int userId);
 }

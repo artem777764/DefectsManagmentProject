@@ -65,7 +65,19 @@ public class UsersController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserAsync([FromRoute] int id)
     {
-        GetUserDTO? userDTO = await _userSerivce.GetUserByIdAsync(id);
+        GetUserExtendedDTO? userDTO = await _userSerivce.GetUserByIdAsync(id);
+        if (userDTO == null) return NotFound();
+        else return Ok(userDTO);
+    }
+
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetUserAsync()
+    {
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim.Value);
+
+        GetUserExtendedDTO? userDTO = await _userSerivce.GetUserByIdAsync(userId);
         if (userDTO == null) return NotFound();
         else return Ok(userDTO);
     }

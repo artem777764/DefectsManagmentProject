@@ -1,5 +1,5 @@
 <template>
-  <input v-model="model" :type="props.isHidden ? 'password' : 'text'" :placeholder="props.placeholderValue" class="bg-background placeholder-text w-full font-roboto rounded-lg shadow-md text-2xl p-3 hover:brightness-105 focus:brightness-105 focus:outline-none">
+  <input :disabled="isDisabled" v-model="model" :type="props.isHidden ? 'password' : 'text'" :placeholder="props.placeholderValue" class="bg-background placeholder-text w-full font-roboto rounded-lg shadow-md text-2xl p-3 hover:brightness-105 focus:brightness-105 focus:outline-none">
       <slot></slot>
   </input>
 </template>
@@ -8,11 +8,13 @@
 interface Props {
   placeholderValue?: string,
   isHidden?: boolean,
+  isDisabled?: boolean,
 }
 
 const props = withDefaults(defineProps<Props>(), {
   placeholderValue: '',
-  isHidden: false
+  isHidden: false,
+  isDisabled: false,
 })
 
 const model = defineModel();
