@@ -3,10 +3,19 @@ import '@/style.css'
 import App from '@/App.vue'
 import { router } from '@/router'
 import { setupApiInterceptor } from './lib/api';
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 const app = createApp(App);
-app.use(router);
+
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+
+app.use(router)
+   .use(pinia);
+
 router.isReady().then(() => {
    setupApiInterceptor(router);
-   app.mount('#app');
 });
+
+app.mount('#app');

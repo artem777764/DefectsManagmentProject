@@ -21,11 +21,13 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppInput from '@/components/ui/AppInput.vue';
 import AppText from '@/components/ui/AppText.vue';
 import { userApi } from '@/lib/userApi';
+import { useUserStore } from '@/stores/userStore';
 import type { AuthorizeDTO } from '@/types/user/authorizeDTO';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
+const userStore = useUserStore();
 
 const userName = defineModel<string>('userName');
 const password = defineModel<string>('password');
@@ -57,6 +59,10 @@ async function handleLogin() {
     resultText.value = authorizeAnswerDTO.message;
 
     setTimeout(() => {
+      userStore.setUser({
+        userId: authorizeAnswerDTO.userId!,
+        roleId: authorizeAnswerDTO.roleId!
+      })
       if (authorizeAnswerDTO.hasData) router.push({ name: 'projects' })
       else router.push({ name: 'update-data' })
     }, 1500)
