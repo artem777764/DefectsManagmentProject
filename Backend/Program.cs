@@ -104,8 +104,10 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<JwtCookieService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDefectRepository, DefectRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDefectService, DefectService>();
 
 var app = builder.Build();
 
