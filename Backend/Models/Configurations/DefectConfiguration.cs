@@ -16,10 +16,6 @@ public class DefectConfiguration : IEntityTypeConfiguration<DefectEntity>
                .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 
-        builder.HasOne(d => d.DefectStatus)
-               .WithMany(ds => ds.Defects)
-               .HasForeignKey(d => d.StatusId);
-
         builder.HasOne(d => d.Priority)
                .WithMany(p => p.Defects)
                .HasForeignKey(d => d.PriorityId);

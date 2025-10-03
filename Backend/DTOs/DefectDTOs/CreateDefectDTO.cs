@@ -7,5 +7,4 @@ public record CreateDefectDTO
     public required int ProjectId { get; set; }
     public required int PriorityId { get; set; }
     public DateTime? Deadline { get; set; }
-    public int? ExecutorId { get; set; }
 }

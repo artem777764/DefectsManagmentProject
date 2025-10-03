@@ -12,13 +12,11 @@ public static class DefectExtensions
             Title = createDefectDTO.Title,
             Description = createDefectDTO.Description,
             ProjectId = createDefectDTO.ProjectId,
-            StatusId = 1,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             PriorityId = createDefectDTO.PriorityId,
             Deadline = createDefectDTO.Deadline,
             CreatorId = creatorId,
-            ExecutorId = createDefectDTO.ExecutorId,
         };
     }
 
@@ -29,8 +27,14 @@ public static class DefectExtensions
         defectEntity.UpdatedAt = DateTime.UtcNow;
         defectEntity.PriorityId = updateDefectDTO.PriorityId;
         defectEntity.Deadline = updateDefectDTO.Deadline;
-        defectEntity.ExecutorId = updateDefectDTO.ExecutorId;
 
+        return defectEntity;
+    }
+
+    public static DefectEntity UpdateExecutor(this DefectEntity defectEntity, AppointmentDTO appointmentDTO)
+    {
+        defectEntity.ExecutorId = appointmentDTO.ExecutorId;
+        
         return defectEntity;
     }
 

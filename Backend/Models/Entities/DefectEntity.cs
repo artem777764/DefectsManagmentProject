@@ -6,7 +6,6 @@ public class DefectEntity
     public required string Title { get; set; }
     public string? Description { get; set; }
     public int ProjectId { get; set; }
-    public int StatusId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public int PriorityId { get; set; }

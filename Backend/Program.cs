@@ -105,6 +105,7 @@ builder.Services.AddScoped<JwtCookieService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDefectRepository, DefectRepository>();
+builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDefectService, DefectService>();

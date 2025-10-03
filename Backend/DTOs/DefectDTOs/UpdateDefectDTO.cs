@@ -7,5 +7,4 @@ public record UpdateDefectDTO
     public string? Description { get; set; }
     public required int PriorityId { get; set; }
     public DateTime? Deadline { get; set; }
-    public int? ExecutorId { get; set; }
 }

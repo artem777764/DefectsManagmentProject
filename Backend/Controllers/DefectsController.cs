@@ -36,6 +36,54 @@ public class DefectsController : ControllerBase
         return Ok(idDTO);
     }
 
+    [HttpPost("appointment")]
+    [AuthorizeByPolicy(Policy.Manager)]
+    public async Task<IActionResult> AppointDefectAsync([FromBody] AppointmentDTO appointmentDTO)
+    {
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim.Value);
+
+        IdDTO idDTO = await _defectService.AppointmentExecutorAsync(appointmentDTO, userId);
+        return Ok(idDTO);
+    }
+
+    [HttpPost("verify/{id}")]
+    [AuthorizeByPolicy(Policy.Engineer)]
+    public async Task<IActionResult> VerifyDefectAsync([FromRoute] int id)
+    {
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim.Value);
+
+        IdDTO idDTO = await _defectService.SendOnVerifying(id, userId);
+        return Ok(idDTO);
+    }
+
+    [HttpPost("deny/{id}")]
+    [AuthorizeByPolicy(Policy.Manager)]
+    public async Task<IActionResult> DenyDefectAsync([FromRoute] int id)
+    {
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim.Value);
+
+        IdDTO idDTO = await _defectService.Deny(id, userId);
+        return Ok(idDTO);
+    }
+
+    [HttpPost("accept/{id}")]
+    [AuthorizeByPolicy(Policy.Manager)]
+    public async Task<IActionResult> AcceptDefectAsync([FromRoute] int id)
+    {
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim.Value);
+
+        IdDTO idDTO = await _defectService.Accept(id, userId);
+        return Ok(idDTO);
+    }
+
     [HttpGet("")]
     public async Task<IActionResult> GetDefectsAsync()
     {
@@ -56,4 +104,6 @@ public class DefectsController : ControllerBase
         await _defectService.RemoveByIdAsync(id);
         return Ok();
     }
+
+
 }

@@ -5,9 +5,13 @@ namespace Backend.Services;
 
 public interface IDefectService
 {
+    Task<IdDTO> Accept(int defectId, int userId);
+    Task<IdDTO> AppointmentExecutorAsync(AppointmentDTO appointmentDTO, int appointerId);
     Task<IdDTO> CreateDefectAsync(CreateDefectDTO createDefectDTO, int creatorId);
+    Task<IdDTO> Deny(int defectId, int userId);
     Task<GetDefectDTO?> GetDefectByIdAsync(int defectId);
     Task<List<GetDefectDTO>> GetDefectsAsync();
     Task RemoveByIdAsync(int defectId);
+    Task<IdDTO> SendOnVerifying(int defectId, int senderId);
     Task<IdDTO> UpdateDefectAsync(UpdateDefectDTO updateDefectDTO);
 }
