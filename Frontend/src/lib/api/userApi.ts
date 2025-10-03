@@ -1,4 +1,4 @@
-import { getData, postData, putData } from "@/lib/apiHelpers";
+import { getData, postData, putData } from "@/lib/api/apiHelpers";
 import type { AuthorizeAnswerDTO } from "@/types/user/authorizeAnswerDTO";
 import type { AuthorizeDTO } from "@/types/user/authorizeDTO";
 import type { CreateUserDataDTO } from "@/types/user/createUserDataDTO";

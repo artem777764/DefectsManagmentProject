@@ -27,7 +27,7 @@ import AppButton from '@/components/ui/AppButton.vue'
 import AppCheckbox from '@/components/ui/AppCheckbox.vue';
 import AppInput from '@/components/ui/AppInput.vue';
 import AppText from '@/components/ui/AppText.vue';
-import { userApi } from '@/lib/userApi';
+import { userApi } from '@/lib/api/userApi';
 import type { CreateUserDTO } from '@/types/user/createUserDTO';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';

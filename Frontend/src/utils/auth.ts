@@ -1,4 +1,4 @@
-import { userApi } from '@/lib/userApi';
+import { userApi } from '@/lib/api/userApi';
 import { useUserStore } from '@/stores/userStore'
 
 export const logout = () => {

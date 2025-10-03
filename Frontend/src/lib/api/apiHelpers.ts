@@ -1,4 +1,4 @@
-import api from '@/lib/api';
+import api from '@/lib/api/api';
 import type { AxiosRequestConfig } from 'axios';
 
 export async function getData<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {

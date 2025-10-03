@@ -19,7 +19,7 @@ import AppForm from '@/components/layout/AppForm.vue';
 import AppButton from '@/components/ui/AppButton.vue';
 import AppInput from '@/components/ui/AppInput.vue';
 import AppText from '@/components/ui/AppText.vue';
-import { userApi } from '@/lib/userApi';
+import { userApi } from '@/lib/api/userApi';
 import type { CreateUserDataDTO } from '@/types/user/createUserDataDTO';
 import { ref } from 'vue';
 import { computed, onMounted } from 'vue';

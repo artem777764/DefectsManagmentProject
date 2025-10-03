@@ -10,6 +10,9 @@ public class DefectConfiguration : IEntityTypeConfiguration<DefectEntity>
     {
         builder.HasKey(d => d.Id);
 
+        builder.Property(d => d.Title)
+               .UseCollation("ru-RU-x-icu");
+
         builder.HasOne(d => d.Project)
                .WithMany(p => p.Defects)
                .HasForeignKey(d => d.ProjectId)

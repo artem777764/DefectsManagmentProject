@@ -25,7 +25,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.ApplyConfiguration(new RoleConfiguration());
         modelBuilder.ApplyConfiguration(new UserDataConfiguration());
         modelBuilder.ApplyConfiguration(new UserConfiguration());
-
+        
         base.OnModelCreating(modelBuilder);
     }
 

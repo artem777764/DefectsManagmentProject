@@ -1,6 +1,6 @@
 import { readonly } from 'vue';
-import api from '@/lib/api';
-import * as helpers from '@/lib/apiHelpers';
+import api from '@/lib/api/api';
+import * as helpers from '@/lib/api/apiHelpers';
 import type { AxiosInstance } from 'axios';
 
 

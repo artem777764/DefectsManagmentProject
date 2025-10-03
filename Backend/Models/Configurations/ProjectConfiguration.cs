@@ -9,5 +9,8 @@ public class ProjectConfiguration : IEntityTypeConfiguration<ProjectEntity>
     void IEntityTypeConfiguration<ProjectEntity>.Configure(EntityTypeBuilder<ProjectEntity> builder)
     {
         builder.HasKey(p => p.Id);
+
+        builder.Property(p => p.Name)
+               .UseCollation("ru-RU-x-icu");
     }
 }

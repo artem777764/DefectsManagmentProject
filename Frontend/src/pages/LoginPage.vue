@@ -20,7 +20,7 @@ import AppForm from '@/components/layout/AppForm.vue';
 import AppButton from '@/components/ui/AppButton.vue'
 import AppInput from '@/components/ui/AppInput.vue';
 import AppText from '@/components/ui/AppText.vue';
-import { userApi } from '@/lib/userApi';
+import { userApi } from '@/lib/api/userApi';
 import { useUserStore } from '@/stores/userStore';
 import type { AuthorizeDTO } from '@/types/user/authorizeDTO';
 import { computed, ref } from 'vue';
