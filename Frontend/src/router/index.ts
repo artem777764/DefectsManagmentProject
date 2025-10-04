@@ -41,7 +41,7 @@ const routes = [
     path: '/objects/:objectId/defects',
     name: 'defects',
     component: DefectsPage,
-    meta: { showNavnar: true },
+    meta: { showNavbar: true },
     props: true,
   }
 ]

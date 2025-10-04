@@ -1,5 +1,5 @@
 import { getData } from "@/lib/api/apiHelpers";
-import type { GetObjectDTO } from "@/types/user/getObjectDTO";
+import type { GetObjectDTO } from "@/types/objects/getObjectDTO";
 
 export const objectApi = {
 

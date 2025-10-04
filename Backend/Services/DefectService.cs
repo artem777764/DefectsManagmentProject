@@ -79,16 +79,16 @@ public class DefectService : IDefectService
         else return defectEntity.ToDTO();
     }
 
-    public async Task<List<GetDefectDTO>> GetByProjectAsync(int projectId, int userId, int roleId)
+    public async Task<List<GetDefectDTO>> GetByProjectAsync(int projectId, int userId, int roleId, string? searchQuery)
     {
         if (Role.Engineer == (Role)roleId)
         {
             Expression<Func<DefectEntity, bool>> filter = d => d.ExecutorId == userId;
-            return (await _defectRepository.GetByProjectAsync(projectId, filter)).Select(p => p.ToDTO()).ToList();
+            return (await _defectRepository.GetByProjectAsync(projectId, searchQuery, filter)).Select(p => p.ToDTO()).ToList();
         }
         else
         {
-            return (await _defectRepository.GetByProjectAsync(projectId)).Select(p => p.ToDTO()).ToList();
+            return (await _defectRepository.GetByProjectAsync(projectId, searchQuery)).Select(p => p.ToDTO()).ToList();
         }
     }
 

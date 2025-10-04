@@ -101,14 +101,14 @@ public class DefectsController : ControllerBase
 
     [HttpGet("project/{id}")]
     [Authorize]
-    public async Task<IActionResult> GetByProjectAsync([FromRoute] int id)
+    public async Task<IActionResult> GetByProjectAsync([FromRoute] int id, [FromQuery] string? searchQuery)
     {
         Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null) return Unauthorized();
         int userId = int.Parse(userIdClaim.Value);
         int roleId = int.Parse(User.FindFirst(ClaimTypes.Role)!.Value);
 
-        return Ok(await _defectService.GetByProjectAsync(id, userId, roleId));
+        return Ok(await _defectService.GetByProjectAsync(id, userId, roleId, searchQuery));
     }
 
     [HttpDelete("{id}")]

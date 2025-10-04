@@ -20,7 +20,7 @@ public class ProjectRepository : IProjectRepository
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
-            string q = searchQuery.Trim().ToLowerInvariant();
+            string q = searchQuery.Trim();
             query = query.Where(p => EF.Functions.ILike(p.Name, $"%{q}%"));
         }
 

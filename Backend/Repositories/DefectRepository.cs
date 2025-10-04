@@ -56,9 +56,15 @@ public class DefectRepository : IDefectRepository
                        .AsNoTracking();
     }
 
-    public async Task<List<DefectEntity>> GetByProjectAsync(int projectId, Expression<Func<DefectEntity, bool>>? extraFilter = null)
+    public async Task<List<DefectEntity>> GetByProjectAsync(int projectId, string? searchQuery, Expression<Func<DefectEntity, bool>>? extraFilter = null)
     {
         IQueryable<DefectEntity> query = BuildDefectsQuery().Where(p => p.ProjectId == projectId);
+
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            string q = searchQuery.Trim();
+            query = query.Where(p => EF.Functions.ILike(p.Title, $"%{q}%"));
+        }
 
         if (extraFilter != null) query = query.Where(extraFilter);
         return await query.ToListAsync();
