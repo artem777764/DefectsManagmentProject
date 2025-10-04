@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Backend.DTOs;
 using Backend.DTOs.DefectDTOs;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -96,6 +97,18 @@ public class DefectsController : ControllerBase
         GetDefectDTO? getDefectDTO = await _defectService.GetDefectByIdAsync(id);
         if (getDefectDTO == null) return NotFound();
         else return Ok(getDefectDTO);
+    }
+
+    [HttpGet("project/{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetByProjectAsync([FromRoute] int id)
+    {
+        Claim? userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null) return Unauthorized();
+        int userId = int.Parse(userIdClaim.Value);
+        int roleId = int.Parse(User.FindFirst(ClaimTypes.Role)!.Value);
+
+        return Ok(await _defectService.GetByProjectAsync(id, userId, roleId));
     }
 
     [HttpDelete("{id}")]

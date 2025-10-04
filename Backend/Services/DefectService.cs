@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Backend.DTOs;
 using Backend.DTOs.DefectDTOs;
 using Backend.Extensions;
@@ -76,6 +77,19 @@ public class DefectService : IDefectService
         DefectEntity? defectEntity = await _defectRepository.GetByIdAsync(defectId);
         if (defectEntity == null) return null;
         else return defectEntity.ToDTO();
+    }
+
+    public async Task<List<GetDefectDTO>> GetByProjectAsync(int projectId, int userId, int roleId)
+    {
+        if (Role.Engineer == (Role)roleId)
+        {
+            Expression<Func<DefectEntity, bool>> filter = d => d.ExecutorId == userId;
+            return (await _defectRepository.GetByProjectAsync(projectId, filter)).Select(p => p.ToDTO()).ToList();
+        }
+        else
+        {
+            return (await _defectRepository.GetByProjectAsync(projectId)).Select(p => p.ToDTO()).ToList();
+        }
     }
 
     public async Task RemoveByIdAsync(int defectId)
