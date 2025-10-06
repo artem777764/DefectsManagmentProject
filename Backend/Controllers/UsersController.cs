@@ -52,7 +52,7 @@ public class UsersController : ControllerBase
             authorizeAnswerDTO.JwtCookieName!,
             authorizeAnswerDTO.JwtToken!,
             _jwtCookieService.GetAuthCookieOptions());
-            
+
         return Ok(authorizeAnswerDTO);
     }
 
@@ -94,5 +94,12 @@ public class UsersController : ControllerBase
     {
         Response.Cookies.Delete(_jwtCookieService.CookieName, _jwtCookieService.GetAuthCookieOptions(true));
         return Ok();
+    }
+
+    [HttpGet("engineers")]
+    [AuthorizeByPolicy(Policy.Manager)]
+    public async Task<IActionResult> GetEngineersAsync()
+    {
+        return Ok(await _userSerivce.GetEngineersAsync());
     }
 }

@@ -12,6 +12,7 @@ interface Props {
   isHidden?: boolean,
   isDisabled?: boolean,
   isSearch?: boolean,
+  isDate?: boolean,
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
   isHidden: false,
   isDisabled: false,
   isSearch: false,
+  isDate: false,
 })
 
 const colorClass = computed(() => {
@@ -28,6 +30,7 @@ const colorClass = computed(() => {
 
 const type = computed(() => {
   if (props.isHidden) return 'password';
+  else if (props.isDate) return 'date'
   else return 'text';
 })
 

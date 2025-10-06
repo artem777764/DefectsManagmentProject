@@ -35,6 +35,15 @@ public class UserRepository : IUserRepository
         return await _context.Users.Include(u => u.UserData).OrderBy(u => u.UserData.Surname).ToListAsync();
     }
 
+    public async Task<List<UserEntity>> GetEngineersAsync()
+    {
+        return await _context.Users.Include(u => u.Role)
+                                   .Include(u => u.UserData)
+                                   .Where(u => u.RoleId == (int)Role.Engineer)
+                                   .Where(u => u.UserData != null)
+                                   .ToListAsync();
+    }
+
     public async Task<UserEntity?> GetByIdAsync(int userId)
     {
         return await _context.Users.Include(u => u.UserData).Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == userId);

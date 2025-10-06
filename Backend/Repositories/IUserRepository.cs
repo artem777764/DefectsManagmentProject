@@ -4,6 +4,7 @@ namespace Backend.Repositories;
 
 public interface IUserRepository
 {
+    Task<List<UserEntity>> GetEngineersAsync();
     Task<int> CreateUserAsync(UserEntity user);
     Task<UserEntity?> GetByEmailAsync(string email);
     Task<UserEntity?> GetByIdAsync(int userId);

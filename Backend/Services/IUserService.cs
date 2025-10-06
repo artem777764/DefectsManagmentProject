@@ -6,6 +6,7 @@ namespace Backend.Services;
 
 public interface IUserService
 {
+    Task<List<GetEngineerDTO>> GetEngineersAsync();
     Task<RegisterAnswerDTO> RegisterUserAsync(CreateUserDTO createUserDto);
     Task<UpdateDataAnswerDTO> UpdateUserDataAsync(CreateUserDataDTO createUserDataDto, int userId);
     Task<AuthorizeAnswerDTO> AuthorizeAsync(AuthorizeDTO authorizeDTO);

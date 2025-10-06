@@ -37,7 +37,6 @@ onMounted(() => {
 const fetchObjects = async () => {
   try {
     objects.value = await objectApi.getAll(searchQuery.value);
-    console.log(objects.value);
   } catch (error: any) {
 
   }

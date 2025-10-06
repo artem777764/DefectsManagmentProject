@@ -5,6 +5,14 @@ namespace Backend.Extensions;
 
 public static class UserExtensions
 {
+    public static GetEngineerDTO ToEngineerDTO(this UserEntity userEntity)
+    {
+        return new GetEngineerDTO
+        {
+            Value = userEntity.Id,
+            Name = userEntity.UserData.Surname + " " + userEntity.UserData.Name + " " + userEntity.UserData.Patronymic,
+        };
+    }
     public static UserEntity ToEntity(this CreateUserDTO userDto, string passwordHash, int roleId)
     {
         return new UserEntity

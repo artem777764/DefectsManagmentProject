@@ -1,3 +1,4 @@
+import DefectEditPage from '@/pages/DefectEditPage.vue'
 import DefectsPage from '@/pages/DefectsPage.vue'
 import LoginPage from '@/pages/LoginPage.vue'
 import ObjectsPage from '@/pages/ObjectsPage.vue'
@@ -43,7 +44,14 @@ const routes = [
     component: DefectsPage,
     meta: { showNavbar: true },
     props: true,
-  }
+  },
+  {
+    path: '/objects/:objectId/defects/:defectId',
+    name: 'defect-edit',
+    component: DefectEditPage,
+    meta: { showNavbar: true },
+    props: true,
+  },
 ]
 
 export const router = createRouter({
