@@ -16,7 +16,6 @@ public class DefectEntity
     public List<CommentEntity> Comments { get; set; } = new List<CommentEntity>();
     public List<HistoryEntity> History { get; set; } = new List<HistoryEntity>();
     public ProjectEntity Project { get; set; } = null!;
-    public DefectStatusEntity DefectStatus { get; set; } = null!;
     public PriorityEntity Priority { get; set; } = null!;
     public List<AttachmentEntity> Attachments { get; set; } = new List<AttachmentEntity>();
     public UserEntity Creator { get; set; } = null!;

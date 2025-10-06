@@ -38,20 +38,21 @@ public static class DefectExtensions
         return defectEntity;
     }
 
-    public static GetDefectDTO ToDTO(this DefectEntity defectEntity)
+    public static GetDefectDTO ToDTO(this DefectWithLatestHistory defectWithLatestHistory)
     {
         return new GetDefectDTO
         {
-            Id = defectEntity.Id,
-            Title = defectEntity.Title,
-            Description = defectEntity.Description,
-            StatusName = defectEntity.DefectStatus.Name,
-            CreatedAt = defectEntity.CreatedAt,
-            UpdatedAt = defectEntity.UpdatedAt,
-            PriorityName = defectEntity.Priority.Name,
-            Deadline = defectEntity.Deadline,
-            CreatorId = defectEntity.CreatorId,
-            ExecutorId = defectEntity.ExecutorId,
+            Id = defectWithLatestHistory.DefectId,
+            Title = defectWithLatestHistory.DefectTitle,
+            Description = defectWithLatestHistory.DefectDescription,
+            StatusId = defectWithLatestHistory.StatusId,
+            StatusName = defectWithLatestHistory.StatusName,
+            CreatedAt = defectWithLatestHistory.CreatedAt,
+            UpdatedAt = defectWithLatestHistory.UpdatedAt,
+            PriorityName = defectWithLatestHistory.PriorityName,
+            Deadline = defectWithLatestHistory.Deadline,
+            CreatorId = defectWithLatestHistory.CreatorId,
+            ExecutorId = defectWithLatestHistory.ExecutorId,
         };
     }
 }

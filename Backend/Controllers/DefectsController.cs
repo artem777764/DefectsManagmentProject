@@ -110,7 +110,7 @@ public class DefectsController : ControllerBase
 
         return Ok(await _defectService.GetByProjectAsync(id, userId, roleId, searchQuery));
     }
-
+    
     [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveDefectAsync([FromRoute] int id)
     {

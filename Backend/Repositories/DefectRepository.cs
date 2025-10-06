@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Backend.DTOs.DefectDTOs;
 using Backend.Models.Context;
 using Backend.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -30,40 +31,68 @@ public class DefectRepository : IDefectRepository
         return defect.Id;
     }
 
-    public async Task<List<DefectEntity>> GetDefectsAsync()
+    public async Task<List<DefectWithLatestHistory>> GetDefectsAsync()
     {
         return await BuildDefectsQuery().ToListAsync();
     }
 
-    public async Task<DefectEntity?> GetByIdAsync(int defectId)
+    public async Task<DefectWithLatestHistory?> GetByIdAsync(int defectId)
     {
-        return await BuildDefectsQuery().FirstOrDefaultAsync(d => d.Id == defectId);
+        return await BuildDefectsQuery().FirstOrDefaultAsync(dh => dh.DefectId == defectId);
     }
 
-    private IQueryable<DefectEntity> BuildDefectsQuery()
+    private IQueryable<DefectWithLatestHistory> BuildDefectsQuery()
     {
-        return _context.Defects
-                       .Include(d => d.DefectStatus)
-                       .Include(d => d.Priority)
-                       .Include(d => d.Project)
-                       .Include(d => d.Comments)
-                       .Include(d => d.History)
-                       .Include(d => d.Attachments)
-                       .Include(d => d.Creator)
-                       .ThenInclude(c => c.UserData)
-                       .Include(d => d.Executor)
-                       .ThenInclude(e => e != null ? e.UserData : null)
-                       .AsNoTracking();
+        return _context.Defects.Include(d => d.Priority)
+                               .Include(d => d.Project)
+                               .Include(d => d.Comments)
+                               .Include(d => d.Attachments)
+                               .Include(d => d.Creator)
+                                   .ThenInclude(c => c.UserData)
+                               .Include(d => d.Executor)
+                                   .ThenInclude(e => e != null ? e.UserData : null)
+                               .Select(d => new DefectWithLatestHistory
+                               {
+                                   DefectId = d.Id,
+                                   DefectTitle = d.Title,
+                                   DefectDescription = d.Description,
+                                   StatusId = d.History.OrderByDescending(h => h.CreatedAt).FirstOrDefault()!.DefectStatus.Id,
+                                   StatusName = d.History.OrderByDescending(h => h.CreatedAt).FirstOrDefault()!.DefectStatus.Name,
+                                   CreatedAt = d.CreatedAt,
+                                   UpdatedAt = d.UpdatedAt,
+                                   PriorityName = d.Priority.Name,
+                                   Deadline = d.Deadline,
+                                   CreatorId = d.CreatorId,
+                                   ExecutorId = d.ExecutorId,
+                                   ProjectId = d.Project.Id,
+                               })
+                               .OrderByDescending(dh => dh.CreatedAt)
+                               .AsNoTracking();
     }
 
-    public async Task<List<DefectEntity>> GetByProjectAsync(int projectId, string? searchQuery, Expression<Func<DefectEntity, bool>>? extraFilter = null)
+    public async Task<DefectEntity?> GetByIdEntityAsync(int defectId)
     {
-        IQueryable<DefectEntity> query = BuildDefectsQuery().Where(p => p.ProjectId == projectId);
+        return await _context.Defects.Include(d => d.Priority)
+                                     .Include(d => d.Project)
+                                     .Include(d => d.Comments)
+                                     .Include(d => d.History)
+                                         .ThenInclude(h => h.DefectStatus)
+                                     .Include(d => d.Attachments)
+                                     .Include(d => d.Creator)
+                                         .ThenInclude(c => c.UserData)
+                                     .Include(d => d.Executor)
+                                         .ThenInclude(e => e != null ? e.UserData : null)
+                                     .FirstOrDefaultAsync(d => d.Id == defectId);
+    }
+
+    public async Task<List<DefectWithLatestHistory>> GetByProjectAsync(int projectId, string? searchQuery, Expression<Func<DefectWithLatestHistory, bool>>? extraFilter = null)
+    {
+        IQueryable<DefectWithLatestHistory> query = BuildDefectsQuery().Where(dh => dh.ProjectId == projectId);
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
             string q = searchQuery.Trim();
-            query = query.Where(p => EF.Functions.ILike(p.Title, $"%{q}%"));
+            query = query.Where(dh => EF.Functions.ILike(dh.DefectTitle, $"%{q}%"));
         }
 
         if (extraFilter != null) query = query.Where(extraFilter);

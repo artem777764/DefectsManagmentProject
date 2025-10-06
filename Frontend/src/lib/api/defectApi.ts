@@ -7,4 +7,7 @@ export const defectApi = {
     getData<[GetDefectDTO]>(`defects/project/${projectId}`, {
       params: { searchQuery },
     }),
+
+  getById: (defectId: number) : Promise<GetDefectDTO> =>
+    getData<GetDefectDTO>(`defects/${defectId}`)
 };

@@ -29,14 +29,14 @@ public class DefectService : IDefectService
 
     public async Task<IdDTO> UpdateDefectAsync(UpdateDefectDTO updateDefectDTO)
     {
-        DefectEntity defectEntity = (await _defectRepository.GetByIdAsync(updateDefectDTO.Id))!;
+        DefectEntity defectEntity = (await _defectRepository.GetByIdEntityAsync(updateDefectDTO.Id))!;
         await _defectRepository.UpdateDefectAsync(defectEntity.Update(updateDefectDTO));
         return new IdDTO { Id = defectEntity.Id };
     }
 
     public async Task<IdDTO> AppointmentExecutorAsync(AppointmentDTO appointmentDTO, int appointerId)
     {
-        DefectEntity defectEntity = (await _defectRepository.GetByIdAsync(appointmentDTO.DefectId))!;
+        DefectEntity defectEntity = (await _defectRepository.GetByIdEntityAsync(appointmentDTO.DefectId))!;
         await _defectRepository.UpdateDefectAsync(defectEntity.UpdateExecutor(appointmentDTO));
 
         await _historyRepository.CreateHistoryAsync(defectEntity.ToHistoryAppointmentEntity(appointerId));
@@ -45,7 +45,7 @@ public class DefectService : IDefectService
 
     public async Task<IdDTO> SendOnVerifying(int defectId, int senderId)
     {
-        DefectEntity defectEntity = (await _defectRepository.GetByIdAsync(defectId))!;
+        DefectEntity defectEntity = (await _defectRepository.GetByIdEntityAsync(defectId))!;
 
         await _historyRepository.CreateHistoryAsync(defectEntity.ToHistoryVerifyingEntity(senderId));
         return new IdDTO { Id = defectEntity.Id };
@@ -53,7 +53,7 @@ public class DefectService : IDefectService
 
     public async Task<IdDTO> Deny(int defectId, int userId)
     {
-        DefectEntity defectEntity = (await _defectRepository.GetByIdAsync(defectId))!;
+        DefectEntity defectEntity = (await _defectRepository.GetByIdEntityAsync(defectId))!;
 
         await _historyRepository.CreateHistoryAsync(defectEntity.ToHistoryDeniedEntity(userId));
         return new IdDTO { Id = defectEntity.Id };
@@ -61,7 +61,7 @@ public class DefectService : IDefectService
 
     public async Task<IdDTO> Accept(int defectId, int userId)
     {
-        DefectEntity defectEntity = (await _defectRepository.GetByIdAsync(defectId))!;
+        DefectEntity defectEntity = (await _defectRepository.GetByIdEntityAsync(defectId))!;
 
         await _historyRepository.CreateHistoryAsync(defectEntity.ToHistoryAcceptedEntity(userId));
         return new IdDTO { Id = defectEntity.Id };
@@ -74,21 +74,21 @@ public class DefectService : IDefectService
 
     public async Task<GetDefectDTO?> GetDefectByIdAsync(int defectId)
     {
-        DefectEntity? defectEntity = await _defectRepository.GetByIdAsync(defectId);
-        if (defectEntity == null) return null;
-        else return defectEntity.ToDTO();
+        DefectWithLatestHistory? defectWithLatestHistory = await _defectRepository.GetByIdAsync(defectId);
+        if (defectWithLatestHistory == null) return null;
+        else return defectWithLatestHistory.ToDTO();
     }
 
     public async Task<List<GetDefectDTO>> GetByProjectAsync(int projectId, int userId, int roleId, string? searchQuery)
     {
         if (Role.Engineer == (Role)roleId)
         {
-            Expression<Func<DefectEntity, bool>> filter = d => d.ExecutorId == userId;
-            return (await _defectRepository.GetByProjectAsync(projectId, searchQuery, filter)).Select(p => p.ToDTO()).ToList();
+            Expression<Func<DefectWithLatestHistory, bool>> filter = dh => dh.ExecutorId == userId;
+            return (await _defectRepository.GetByProjectAsync(projectId, searchQuery, filter)).Select(dh => dh.ToDTO()).ToList();
         }
         else
         {
-            return (await _defectRepository.GetByProjectAsync(projectId, searchQuery)).Select(p => p.ToDTO()).ToList();
+            return (await _defectRepository.GetByProjectAsync(projectId, searchQuery)).Select(dh => dh.ToDTO()).ToList();
         }
     }
 
