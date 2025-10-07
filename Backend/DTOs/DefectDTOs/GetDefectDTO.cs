@@ -9,6 +9,7 @@ public record GetDefectDTO
     public required string StatusName { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public required int PriorityId { get; set; }
     public required string PriorityName { get; set; }
     public DateTime? Deadline { get; set; }
     public int CreatorId { get; set; }

@@ -7,6 +7,7 @@ export interface GetDefectDTO
     statusName: string,
     createdAt: string,
     updatedAt?: string,
+    priorityId: number,
     priorityName: string,
     deadline?: string,
     creatorId: number,

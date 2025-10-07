@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-7 p-7">
     <div :v-if="roleId == 2" class="flex flex-row gap-7">
-      <AppButton>Зарегистрировать дефект</AppButton>
+      <AppButton @click="goToCreateDefect()">Зарегистрировать дефект</AppButton>
       <AppButton>Создать новый отчёт</AppButton>
       <AppTextBlock>
         <AppText>Задач находится в работе:</AppText>
@@ -12,7 +12,7 @@
     <div>
         <AppText class="text-4xl">Проекты</AppText>
         <div class="grid grid-cols-4 gap-x-5 mt-5">
-            <AppCard v-for="defect in defects" :key="defect.id" @click="goToDefect(defect.id)" class="mb-5 block cursor-pointer">
+            <AppCard v-for="defect in defects" :key="defect.id" @click="goToUpdateDefect(defect.id)" class="mb-5 block cursor-pointer">
                 <AppCardContent>
                     <AppText class="font-medium text-2xl">{{ defect.title }}</AppText>
                     <AppLine/>
@@ -83,7 +83,11 @@ watch(searchQuery, () => {
   debouncedFetch();
 });
 
-function goToDefect(id: number) {
+function goToCreateDefect() {
+  router.push({ name: 'defect-edit', params: { objectId: String(objectId), defectId: '0'} })
+}
+
+function goToUpdateDefect(id: number) {
   router.push({ name: 'defect-edit', params: { objectId: String(objectId), defectId: String(id) } })
 }
 </script>

@@ -11,6 +11,7 @@ public record DefectWithLatestHistory
     public required string StatusName { get; set; }
     public required DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public required int PriorityId { get; set; }
     public required string PriorityName { get; set; }
     public DateTime? Deadline { get; set; }
     public required int CreatorId { get; set; }

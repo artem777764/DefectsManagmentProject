@@ -1,3 +1,4 @@
+using System.Globalization;
 using Backend.DTOs.DefectDTOs;
 using Backend.Models.Entities;
 
@@ -5,6 +6,18 @@ namespace Backend.Extensions;
 
 public static class DefectExtensions
 {
+    private static DateTime? ParseDate(string? dateString)
+    {
+        DateTime? parsedDeadline = null;
+
+        if (!string.IsNullOrWhiteSpace(dateString) &&
+            DateTimeOffset.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+        {
+            parsedDeadline = result.UtcDateTime;
+        }
+
+        return parsedDeadline;
+    }
     public static DefectEntity ToEntity(this CreateDefectDTO createDefectDTO, int creatorId)
     {
         return new DefectEntity
@@ -15,7 +28,7 @@ public static class DefectExtensions
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = null,
             PriorityId = createDefectDTO.PriorityId,
-            Deadline = createDefectDTO.Deadline,
+            Deadline = ParseDate(createDefectDTO.Deadline),
             CreatorId = creatorId,
         };
     }
@@ -26,7 +39,7 @@ public static class DefectExtensions
         defectEntity.Description = updateDefectDTO.Description;
         defectEntity.UpdatedAt = DateTime.UtcNow;
         defectEntity.PriorityId = updateDefectDTO.PriorityId;
-        defectEntity.Deadline = updateDefectDTO.Deadline;
+        defectEntity.Deadline = ParseDate(updateDefectDTO.Deadline);
 
         return defectEntity;
     }
@@ -49,6 +62,7 @@ public static class DefectExtensions
             StatusName = defectWithLatestHistory.StatusName,
             CreatedAt = defectWithLatestHistory.CreatedAt,
             UpdatedAt = defectWithLatestHistory.UpdatedAt,
+            PriorityId = defectWithLatestHistory.ProjectId,
             PriorityName = defectWithLatestHistory.PriorityName,
             Deadline = defectWithLatestHistory.Deadline,
             CreatorId = defectWithLatestHistory.CreatorId,

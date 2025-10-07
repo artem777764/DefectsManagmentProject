@@ -2,17 +2,20 @@
     <div class="min-h-screen flex justify-center items-center">
       <AppForm class="w-1/3">
         <AppInput v-model="title" placeholder-value="Название" class="w-full"/>
-        <AppInput v-model="description" placeholder-value="Описание" class="w-full"></AppInput>
+        <AppTextarea v-model="description" placeholder-value="Описание" class="w-full"/>
         <AppSelector v-model="priorityId" :options="priorities" placeholder="Приоритет"/>
-        <AppSelector v-model="engineerId" :options="engineers" placeholder="Назначаемый инженер"/>
-        <AppInput v-model="status" placeholder-value="Статус" class="w-full"></AppInput>
-        <AppInput v-model="deadline" placeholder-value="Срок" :is-date="true" class="w-full"></AppInput>
+        <AppSelector
+          v-model="engineerId" :options="engineers" placeholder="Назначаемый инженер"
+          v-if="showNewStatusElements"
+        />
+        <AppInput v-if="showStatus" :is-disabled="inputsEnabled" v-model="status" placeholder-value="Статус" class="w-full"></AppInput>
+        <AppInput :is-disabled="inputsEnabled" v-model="deadline" placeholder-value="Срок" :is-date="true" class="w-full"></AppInput>
         <div
-          v-if="showNewStatusButtons"
+          v-if="showNewStatusElements"
           class="flex flex-row justify-between gap-5"
         >
-          <AppButton>Сохранить</AppButton>
-          <AppButton>Назначить</AppButton>
+          <AppButton @click="handleCreateOrUpdateDefect()">Сохранить</AppButton>
+          <AppButton @click="handleAppointmentDefect()">Назначить</AppButton>
         </div>
       </AppForm>
     </div>
@@ -23,12 +26,18 @@ import AppForm from '@/components/layout/AppForm.vue';
 import AppButton from '@/components/ui/AppButton.vue';
 import AppInput from '@/components/ui/AppInput.vue';
 import AppSelector from '@/components/ui/AppSelector.vue';
+import AppTextarea from '@/components/ui/AppTextarea.vue';
 import { defectApi } from '@/lib/api/defectApi';
 import { priorityApi } from '@/lib/api/priorityApi';
 import { userApi } from '@/lib/api/userApi';
+import { useUserStore } from '@/stores/userStore';
+import type { AppointmentDTO } from '@/types/defects/appointmentDTO';
+import type { CreateDefectDTO } from '@/types/defects/createDefectDTO';
 import type { GetDefectDTO } from '@/types/defects/getDefectDTO';
+import type { UpdateDefectDTO } from '@/types/defects/updateDefectDTO';
 import type { Option } from '@/types/option';
 import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const isLoading = ref(true);
 
@@ -43,17 +52,21 @@ onMounted(async () => {
     fetchEngineers(),
     fetchDefect()
   ]);
+  setModels(defect.value);
   isLoading.value = false;
 })
 
+const router = useRouter();
+
 const objectId = Number(props.objectId);
 const defectId = Number(props.defectId);
-const title = defineModel('title');
-const description = defineModel('description');
+const roleId = useUserStore().roleId;
+const title = defineModel<string>('title');
+const description = defineModel<string>('description');
 const priorityId = defineModel<number>('priorityId');
 const engineerId = defineModel<number>('engineerId')
 const status = defineModel('status');
-const deadline = defineModel('deadline');
+const deadline = defineModel<string>('deadline');
 
 const defect = ref<GetDefectDTO | null>();
 const priorities = ref<Option[]>();
@@ -83,10 +96,122 @@ const fetchDefect = async () => {
   }
 }
 
-const showNewStatusButtons = computed(() => {
+const setModels = (defect?: GetDefectDTO | null) => {
+  title.value = defect?.title ?? '';
+  description.value = defect?.description ?? '';
+  priorityId.value = defect?.priorityId ?? 0;
+  engineerId.value = defect?.executorId ?? 0;
+  deadline.value = defect?.deadline ? toDateTimeLocal(defect.deadline) : '';
+}
+
+const showNewStatusElements = computed(() => {
   if (isLoading.value) return false;
   return defect.value?.statusId == null || defect.value?.statusId == 1;
 });
+
+const inputsEnabled = computed(() => {
+  return roleId != 2;
+});
+
+const showStatus = computed(() => {
+  if (defect == null) return true;
+  if (defect.value?.statusId != 1) return true;
+  return false;
+})
+
+async function createDefect() {
+  const payload: CreateDefectDTO = {
+    title: title.value!,
+    description: description.value || undefined,
+    projectId: objectId,
+    priorityId: priorityId.value!,
+    deadline: deadline.value ? new Date(deadline.value).toISOString() : undefined,
+  }
+  try {
+    await defectApi.create(payload);
+    setTimeout(() => {
+        router.push({
+          name: 'defects',
+          params: {
+            objectId: objectId,
+          }
+        })
+    }, 1500)
+  } catch (e: any) {
+
+  }
+}
+
+async function updateDefect() {
+  const payload: UpdateDefectDTO = {
+    id: defectId,
+    title: title.value!,
+    description: description.value || undefined,
+    priorityId: priorityId.value!,
+    deadline: deadline.value ? new Date(deadline.value).toISOString() : undefined,
+  }
+  try {
+    await defectApi.update(payload);
+    setTimeout(() => {
+        router.push({
+          name: 'defects',
+          params: {
+            objectId: objectId,
+          }
+        })
+    }, 1500)
+  } catch (e: any) {
+
+  }
+}
+
+async function appointDefect() {
+  const payload: AppointmentDTO = {
+    DefectId: defectId,
+    ExecutorId: engineerId.value!,
+  }
+  try {
+    await defectApi.appointment(payload);
+    setTimeout(() => {
+        router.push({
+          name: 'defects',
+          params: {
+            objectId: objectId,
+          }
+        })
+    }, 1500)
+  } catch (e: any) {
+
+  }
+}
+
+async function handleCreateOrUpdateDefect() {
+  if (defectId == 0) {
+    createDefect();
+  }
+  else {
+    updateDefect();
+  }
+}
+
+async function handleAppointmentDefect() {
+  handleCreateOrUpdateDefect();
+  appointDefect();
+}
+
+function toDateTimeLocal(isoString: string) {
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return '';
+  
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 </script>
 
 <style>

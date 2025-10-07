@@ -31,7 +31,7 @@ public class DefectsController : ControllerBase
     }
 
     [HttpPut("")]
-    public async Task<IActionResult> UpdateDefectDTO([FromBody] UpdateDefectDTO updateDefectDTO)
+    public async Task<IActionResult> UpdateDefectAsync([FromBody] UpdateDefectDTO updateDefectDTO)
     {
         IdDTO idDTO = await _defectService.UpdateDefectAsync(updateDefectDTO);
         return Ok(idDTO);

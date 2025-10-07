@@ -6,5 +6,5 @@ public record CreateDefectDTO
     public string? Description { get; set; }
     public required int ProjectId { get; set; }
     public required int PriorityId { get; set; }
-    public DateTime? Deadline { get; set; }
+    public string? Deadline { get; set; }
 }

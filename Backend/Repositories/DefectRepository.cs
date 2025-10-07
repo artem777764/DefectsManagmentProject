@@ -60,6 +60,7 @@ public class DefectRepository : IDefectRepository
                                    StatusName = d.History.OrderByDescending(h => h.CreatedAt).FirstOrDefault()!.DefectStatus.Name,
                                    CreatedAt = d.CreatedAt,
                                    UpdatedAt = d.UpdatedAt,
+                                   PriorityId = d.Priority.Id,
                                    PriorityName = d.Priority.Name,
                                    Deadline = d.Deadline,
                                    CreatorId = d.CreatorId,
@@ -88,14 +89,14 @@ public class DefectRepository : IDefectRepository
     public async Task<List<DefectWithLatestHistory>> GetByProjectAsync(int projectId, string? searchQuery, Expression<Func<DefectWithLatestHistory, bool>>? extraFilter = null)
     {
         IQueryable<DefectWithLatestHistory> query = BuildDefectsQuery().Where(dh => dh.ProjectId == projectId);
-
+        /*
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
             string q = searchQuery.Trim();
             query = query.Where(dh => EF.Functions.ILike(dh.DefectTitle, $"%{q}%"));
         }
-
-        if (extraFilter != null) query = query.Where(extraFilter);
+        */
+        //if (extraFilter != null) query = query.Where(extraFilter);
         return await query.ToListAsync();
     }
 

@@ -30,7 +30,7 @@ const colorClass = computed(() => {
 
 const type = computed(() => {
   if (props.isHidden) return 'password';
-  else if (props.isDate) return 'date'
+  else if (props.isDate) return 'datetime-local'
   else return 'text';
 })
 
