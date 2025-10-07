@@ -5,7 +5,7 @@
     :rows="props.rows"
     @input="autoResize"
     ref="textareaRef"
-    class="bg-background placeholder-text w-full font-roboto rounded-lg shadow-md text-2xl p-3 hover:brightness-105 focus:brightness-105 focus:outline-none resize-none"
+    class="bg-background text-justify placeholder-text w-full font-roboto rounded-lg shadow-md text-2xl p-3 hover:brightness-105 focus:brightness-105 focus:outline-none resize-none"
   ></textarea>
 </template>
 

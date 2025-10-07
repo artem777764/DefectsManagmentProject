@@ -23,4 +23,13 @@ export const defectApi = {
 
   appointment: (payload: AppointmentDTO) : Promise<idDTO> =>
     postData<idDTO, AppointmentDTO>('defects/appointment', payload),
+
+  verify: (defectId: number) : Promise<idDTO> =>
+    postData<idDTO, undefined>(`defects/verify/${defectId}`),
+
+  deny: (defectId: number) : Promise<idDTO> =>
+    postData<idDTO, undefined>(`defects/deny/${defectId}`),
+
+  accept: (defectId: number) : Promise<idDTO> =>
+    postData<idDTO, undefined>(`defects/accept/${defectId}`),
 };

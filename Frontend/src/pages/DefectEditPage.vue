@@ -8,14 +8,31 @@
           v-model="engineerId" :options="engineers" placeholder="Назначаемый инженер"
           v-if="showNewStatusElements"
         />
-        <AppInput v-if="showStatus" :is-disabled="inputsEnabled" v-model="status" placeholder-value="Статус" class="w-full"></AppInput>
+        <AppInput v-if="showStatus" :is-disabled="true" v-model="status" placeholder-value="Статус" class="w-full"></AppInput>
         <AppInput :is-disabled="inputsEnabled" v-model="deadline" placeholder-value="Срок" :is-date="true" class="w-full"></AppInput>
         <div
           v-if="showNewStatusElements"
           class="flex flex-row justify-between gap-5"
         >
+          <AppButton @click="goToProject(objectId)">Назад</AppButton>
           <AppButton @click="handleCreateOrUpdateDefect()">Сохранить</AppButton>
           <AppButton @click="handleAppointmentDefect()">Назначить</AppButton>
+        </div>
+        <div
+          v-if="showWorkStatusElements"
+          class="flex flex-row justify-between gap-5"
+        >
+          <AppButton @click="goToProject(objectId)">Назад</AppButton>
+          <AppButton @click="handleCreateOrUpdateDefect()">Сохранить</AppButton>
+          <AppButton @click="handleSendOnVerifyDefect()">Отправить</AppButton>
+        </div>
+        <div
+          v-if="showVerifyStatusElements"
+          class="flex flex-row justify-between gap-5"
+        >
+          <AppButton @click="goToProject(objectId)">Назад</AppButton>
+          <AppButton @click="handleDenyDefect()">Отклонить</AppButton>
+          <AppButton @click="handleAcceptDefect()">Подтвердить</AppButton>
         </div>
       </AppForm>
     </div>
@@ -97,16 +114,27 @@ const fetchDefect = async () => {
 }
 
 const setModels = (defect?: GetDefectDTO | null) => {
-  title.value = defect?.title ?? '';
-  description.value = defect?.description ?? '';
+  title.value = defect?.title ?? 'БЕЗ НАЗВАНИЯ';
+  description.value = defect?.description ?? 'БЕЗ ОПИСАНИЯ';
   priorityId.value = defect?.priorityId ?? 0;
   engineerId.value = defect?.executorId ?? 0;
   deadline.value = defect?.deadline ? toDateTimeLocal(defect.deadline) : '';
+  status.value = defect?.statusName ?? 'БЕЗ СТАТУСА'
 }
 
 const showNewStatusElements = computed(() => {
   if (isLoading.value) return false;
   return defect.value?.statusId == null || defect.value?.statusId == 1;
+});
+
+const showWorkStatusElements = computed(() => {
+  if (isLoading.value) return false;
+  return defect.value?.statusId == 2;
+});
+
+const showVerifyStatusElements = computed(() => {
+  if (isLoading.value) return false;
+  return defect.value?.statusId == 3;
 });
 
 const inputsEnabled = computed(() => {
@@ -130,12 +158,7 @@ async function createDefect() {
   try {
     await defectApi.create(payload);
     setTimeout(() => {
-        router.push({
-          name: 'defects',
-          params: {
-            objectId: objectId,
-          }
-        })
+        goToProject(objectId);
     }, 1500)
   } catch (e: any) {
 
@@ -153,12 +176,7 @@ async function updateDefect() {
   try {
     await defectApi.update(payload);
     setTimeout(() => {
-        router.push({
-          name: 'defects',
-          params: {
-            objectId: objectId,
-          }
-        })
+        goToProject(objectId);
     }, 1500)
   } catch (e: any) {
 
@@ -173,12 +191,40 @@ async function appointDefect() {
   try {
     await defectApi.appointment(payload);
     setTimeout(() => {
-        router.push({
-          name: 'defects',
-          params: {
-            objectId: objectId,
-          }
-        })
+      goToProject(objectId);
+    }, 1500)
+  } catch (e: any) {
+
+  }
+}
+
+async function sendOnVerifyDefect() {
+  try {
+    await defectApi.verify(defectId);
+    setTimeout(() => {
+      goToProject(objectId);
+    }, 1500)
+  } catch (e: any) {
+
+  }
+}
+
+async function denyDefect() {
+  try {
+    await defectApi.deny(defectId);
+    setTimeout(() => {
+      goToProject(objectId);
+    }, 1500)
+  } catch (e: any) {
+
+  }
+}
+
+async function acceptDefect() {
+  try {
+    await defectApi.accept(defectId);
+    setTimeout(() => {
+      goToProject(objectId);
     }, 1500)
   } catch (e: any) {
 
@@ -199,6 +245,18 @@ async function handleAppointmentDefect() {
   appointDefect();
 }
 
+async function handleSendOnVerifyDefect() {
+  sendOnVerifyDefect();
+}
+
+async function handleDenyDefect() {
+  denyDefect();
+}
+
+async function handleAcceptDefect() {
+  acceptDefect();
+}
+
 function toDateTimeLocal(isoString: string) {
   const date = new Date(isoString);
   if (isNaN(date.getTime())) return '';
@@ -210,6 +268,10 @@ function toDateTimeLocal(isoString: string) {
   const minutes = date.getMinutes().toString().padStart(2, '0');
 
   return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function goToProject(id: number) {
+  router.push({ name: 'defects', params: { objectId: String(id) } });
 }
 
 </script>
